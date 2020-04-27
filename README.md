@@ -22,7 +22,7 @@ On a successful request the following happens:
 2. UUID is stored along with the user's IP address and email address to a database
 2. Email is sent with a login link containing the UUID (using [Symfony Notifier](https://symfony.com/doc/current/notifier.html))
 3. A cookie is set to store the UUID on the user's local computer
-4. On each user request the UUID is checked for validity: is it within 6 hours of the one-time login request? If database storage is used does the current user IP address match?
+4. On each user request the UUID is checked for validity: is it within 12 hours of the one-time login request? If database storage is used does the current user IP address match?
 5. On expiry, access requests automatically expire
 6. All access requests are logged (using [Monolog](https://github.com/Seldaek/monolog/blob/master/README.md))
 
@@ -72,7 +72,7 @@ $access->setLogger($logger);
 $access->setUserIpAddress('100.200.300.401');
 
 if ($access->isValid()) {
-	// Do something
+    // Do something
 }
 ```
 
@@ -94,7 +94,7 @@ $oneTime->setEmail('test@domain.com');
 
 // Check the email is in an authorised group
 if ($oneTime->isValid()) {
-	$oneTime->send();
+    $oneTime->send();
 }
 ```
 
@@ -113,10 +113,10 @@ $access->setGroup($group);
 $access->setUuid('73a39bea-88b6-11ea-b675-0f1ac6150413');
 
 if ($access->isValid()) {
-	// Output a cookie to remember access request (please note this sends HTTP headers to the user)
-	$access->setCookie();
+    // Output a cookie to remember access request (please note this sends HTTP headers to the user)
+    $access->setCookie();
 	
-	// Do something
+    // Do something
 }
 ```
 
@@ -128,7 +128,7 @@ $access->setLogger($logger);
 $access->fromCookie();
 
 if ($access->isValid()) {
-	// Do something
+    // Do something
 }
 ```
 
@@ -170,7 +170,7 @@ $oneTime->setIp('100.200.300.400');
 $oneTime->setEmail('test@domain.com');
 
 if ($oneTime->isValid()) {
-	$oneTime->send();
+    $oneTime->send();
 }
 ```
 
@@ -186,9 +186,9 @@ $access->setGroup($group);
 $access->setUserIpAddress('100.200.300.400');
 
 if ($access->isValid()) {
-	$access->setCookie();
-	
-	// Do something
+    $access->setCookie();
+
+    // Do something
 }
 ```
 
@@ -201,7 +201,7 @@ $access->setDb($pdo);
 $access->fromCookie();
 
 if ($access->isValid()) {
-	// Do something
+    // Do something
 }
 ```
 
@@ -233,7 +233,7 @@ $access->setCookie($cookie);
 Available methods (and default values)
 
 * `setName()` - Cookie name to remember authenticated access (default, STRATA_ACCESS)
-* `setLifetime()` - Lifetime of cookie (default, 6hrs)
+* `setLifetime()` - Lifetime of cookie (default, equal to the OneTimeLogin lifetime, 12hrs)
 * `setCookiePath()` - The path on the server in which the cookie will be available on (default, /)
 * `setCookieDomain()` - The (sub)domain that the cookie is available to (defaults to current full hostname)
 * `setSecure()` - Indicates that the cookie should only be transmitted over a secure HTTPS connection from the client (defaults to true)
