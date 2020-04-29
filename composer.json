@@ -2,6 +2,10 @@
     "require": {
         "ramsey/uuid": "^4.0",
         "monolog/monolog": "^2.0",
-        "symfony/notifier": "^5.0"
+        "symfony/notifier": "^5.0",
+        "symfony/yaml": "^4.4"
+    },
+    "autoload": {
+        "psr-4": {"Strata\\": "src/"}
     }
 }

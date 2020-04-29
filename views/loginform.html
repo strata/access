@@ -1,0 +1,32 @@
+<style type="text/css">
+form {
+    width: 40%;
+    margin: 10% auto;
+    border: darkgrey 3px solid;
+    background: #edebea;
+    color: #000;
+    font-family: sans-serif;
+    box-shadow: 10px 10px 5px 0px rgba(100, 100, 100.87);
+    line-height:160%;
+}
+input[type="text"] {
+    display:block;
+    width:90%;
+    font-size:21px;
+    padding:7px;
+}
+p,h3 {
+    padding:0 20px;
+}
+</style>
+
+<form action="/access/otp" method="post">
+
+    <h3>Access Verification Required</h3>
+
+    <p><label for="access_otp_email">Please enter your email before proceeding.</label>
+        <input type="text" name="access_otp_email" id="access_otp_email" placeholder="email@domain.tld">
+    </p>
+    <p><button type="submit">Send One-Time-Password</button></p>
+
+</form>
