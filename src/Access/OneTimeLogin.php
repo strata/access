@@ -7,9 +7,20 @@ use Ramsey\Uuid\Uuid;
 
 class OneTimeLogin
 {
+    /**
+     * @var string
+     */
     protected $uuid;
+
+    /**
+     * @var string
+     */
     protected $user_email;
 
+
+    /**
+     * OneTimeLogin Constructor
+     */
     public function __construct(string $user_email,string $uuid = '')
     {
         $this->user_email = $user_email;
@@ -19,15 +30,26 @@ class OneTimeLogin
         }
     }
 
+
+    /**
+     * Check database for valid OTP/UUID entry.
+     */
     public function verifyOTP() : bool
     {
         global $wpdb;
+
+        // @TODO Fix and clean up query, use PDO.
 
         $query = $wpdb->query("SELECT * FROM strata_access WHERE email='".$this->user_email."' AND uuid='".$this->uuid."'");
 
         return (bool)$query;
 
     }
+
+
+    /**
+     * Generate OTP / UUID
+     */
     public function generateOTP() : void
     {
 
@@ -35,6 +57,10 @@ class OneTimeLogin
 
     }
 
+
+    /**
+     * Send OTP password link to user.
+     */
     public function sendOTP() : void
     {
         if (!$this->user_email) {
@@ -53,7 +79,12 @@ class OneTimeLogin
         $this->storeOTP();
     }
 
-    protected function storeOTP() {
+
+    /**
+     * Save OTP and email to database.
+     */
+    protected function storeOTP() : void
+    {
 
         global $wpdb;
 
@@ -65,6 +96,10 @@ class OneTimeLogin
         $wpdb->insert('strata_access',$data);
     }
 
+
+    /**
+     * Setters
+     */
     public function setUserEmail(string $email) : void
     {
         $this->user_email = $email;

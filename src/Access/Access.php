@@ -7,17 +7,45 @@ use Monolog\Logger;
 
 class Access
 {
+
+    /**
+     * @var \Strata\Access\AccessGroup
+     */
     public $group;
+
+    /**
+     * @var \Strata\Logger\Logger
+     */
     protected $logger;
+
+    /**
+     * @var string
+     */
     protected $user_ip;
+
+    /**
+     * @var string
+     */
     public $user_domain;
+
+    /**
+     * @var string
+     */
     protected $uuid;
 
+
+    /**
+     * Access Constructor
+     */
     public function __construct()
     {
 
     }
 
+    /**
+     * Check IP and Access COOKIE/SESSION against access group.
+     * @returns bool
+     */
     public function isValid(): bool
     {
         // Check user IP against access group list.
@@ -36,7 +64,9 @@ class Access
         return false;
     }
 
-
+    /**
+     * Property Setters
+     */
     public function setUuid(string $uuid) : void
     {
         $this->uuid = $uuid;

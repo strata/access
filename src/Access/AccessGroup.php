@@ -8,10 +8,24 @@ use Symfony\Component\Yaml\Yaml;
 
 class AccessGroup
 {
+    /**
+     * @var array
+     */
     protected $allowed_ips;
+
+    /**
+     * @var array
+     */
     protected $allowed_domains;
+
+    /**
+     * @var \Strata\Logger\Logger
+     */
     protected $logger;
 
+    /**
+     * AccessGroup Constructor
+     */
     public function __construct(string $configFile = '')
     {
 
@@ -25,18 +39,30 @@ class AccessGroup
 
     }
 
+    /**
+     * Search access group for IP.
+     * @returns bool
+     */
     public function checkIP(string $ip) {
 
         return in_array($ip,$this->allowed_ips,true);
 
     }
 
+    /**
+     * Search access group for domain.
+     * @returns bool
+     */
     public function checkDomain(string $domain) {
 
         return in_array($domain,$this->allowed_domains,true);
 
     }
 
+
+    /**
+     * Add IP address to the access group.
+     */
     public function allowByIp(string $ip): void
     {
         if (!in_array($ip,$this->allowed_ips)) {
@@ -46,6 +72,10 @@ class AccessGroup
         }
     }
 
+
+    /**
+     * Add domain name to the access group.
+     */
     public function allowByEmailDomain(string $emailDomain) : void
     {
         if (!in_array($emailDomain,$this->allowed_domains)) {
@@ -55,6 +85,10 @@ class AccessGroup
         }
     }
 
+
+    /**
+     * Load in config YML file to setup access group
+     */
     public function loadConfig(string $configFile) : void
     {
         $configFile = __DIR__.'/../../config/'.$configFile;
@@ -66,6 +100,7 @@ class AccessGroup
 
         $config_file = file_get_contents($configFile);
 
+        // @TODO Catch Exceptions
         $config = Yaml::parse($config_file);
 
         if (!empty($config['ip'])) {
@@ -93,6 +128,9 @@ class AccessGroup
         }
     }
 
+    /**
+     * @param \Strata\Logger\Logger
+     */
     public function setLogger(Logger $logger) : void
     {
         $this->logger = $logger;

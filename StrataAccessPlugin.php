@@ -8,9 +8,20 @@ use Strata\Logger\Logger;
 
 class StrataAccessPlugin
 {
+    /**
+     * @var StrataAccessPlugin
+     */
     private static $instance;
+
+    /**
+     * @var Access
+     */
     private $access;
 
+
+    /**
+     * Plugin Constructor
+     */
     public function __construct()
     {
         $this->load_dependencies();
@@ -18,6 +29,11 @@ class StrataAccessPlugin
         $this->initialise_plugin();
     }
 
+
+    /**
+     * Add singleton functionality
+     * @returns StrataAccessPlugin
+     */
     public static function getInstance()
     {
         if ( is_null( self::$instance ) )
@@ -27,12 +43,22 @@ class StrataAccessPlugin
         return self::$instance;
     }
 
+
+    /**
+     * Get current access instance.
+     * @returns Strata\Access\Access
+     */
     public function getAccess() {
 
         return $this->access;
     }
 
-    private function initialise_plugin() {
+
+    /**
+     * Instantiate all necessary Access code
+     */
+    private function initialise_plugin() : void
+    {
 
         $this->logger = new Logger();
 
@@ -64,13 +90,21 @@ class StrataAccessPlugin
         });
 
     }
-    private function load_dependencies()
+
+
+    /**
+     * Load dependencies / Composer
+     */
+    private function load_dependencies() : void
     {
         require_once __DIR__ . '/vendor/autoload.php';
     }
 
 
-    private function create_routes()
+    /**
+     * Create routes in Wordpress, requires Timber plugin
+     */
+    private function create_routes() : void
     {
         $languageSlug = substr(home_url(), -2);
 
