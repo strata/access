@@ -18,9 +18,7 @@ class AccessGroup
         $this->allowed_ips = [];
         $this->allowed_domains = [];
 
-        $configFile = __DIR__.'/../../config/'.$configFile;
-
-        if (!empty($configFile) && file_exists($configFile))
+        if (!empty($configFile))
         {
             $this->loadConfig($configFile);
         }
@@ -59,6 +57,13 @@ class AccessGroup
 
     public function loadConfig(string $configFile) : void
     {
+        $configFile = __DIR__.'/../../config/'.$configFile;
+
+        if (!file_exists($configFile)) {
+            // @TODO: Throw Exception & Log
+            return;
+        }
+
         $config_file = file_get_contents($configFile);
 
         $config = Yaml::parse($config_file);

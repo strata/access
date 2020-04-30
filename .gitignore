@@ -3,4 +3,9 @@ composer.lock
 /vendor/
 .phpunit*
 
+# configuration
+config/*
+!config/config.yml.dist
+
+# var
 var/log/*
