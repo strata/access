@@ -7,10 +7,10 @@ use Monolog\Logger;
 
 class Access
 {
-    protected $group;
+    public $group;
     protected $logger;
     protected $user_ip;
-    protected $user_domain;
+    public $user_domain;
     protected $uuid;
 
     public function __construct()
@@ -21,8 +21,15 @@ class Access
     public function isValid(): bool
     {
         // Check user IP against access group list.
-        if ( $this->group->checkIP($this->user_ip) )
+        if (!empty($this->user_ip) && $this->group->checkIP($this->user_ip) )
         {
+            echo '<h1>Passed IP Check</h1>';
+            return true;
+        }
+
+        if (!empty($_COOKIE['strata_access']) && $_COOKIE['strata_access'] == 'verified')
+        {
+            echo '<h1>Passed Cookie Check</h1>';
             return true;
         }
 
@@ -48,5 +55,15 @@ class Access
     public function setUserIpAddress(string $ip) : void
     {
         $this->user_ip = $ip;
+    }
+
+    public function setUserEmailDomain(string $domain) : void
+    {
+        if (strpos($domain,'@')) {
+            $email = explode('@',$domain);
+            $domain = $email[1];
+        }
+
+        $this->user_domain = $domain;
     }
 }

@@ -12,47 +12,39 @@
  * @package    Strata / Access
  */
 
-require_once dirname(__FILE__) . '/vendor/autoload.php';
-
-use Strata\Access\Access;
-use Strata\Access\AccessGroup;
-use Strata\Logger\Logger;
-
-/*
- * Hook into Wordpress login form to check access is valid.
- */
-
-add_action( 'login_init', 'strata_access_validation' );
-
-function strata_access_validation() {
-
-    $logger = new Logger();
-
-    $access = new Access;
-    $access->setLogger($logger->client);
-
-    $accessgroup = new AccessGroup('config.yml');
-
-    //$accessgroup->allowByIp('::1');
-
-    $access->setAccessGroup($accessgroup);
-
-    $access->setUserIpAddress( ($_SERVER['X-Forwarded-For']) ?? $_SERVER['REMOTE_ADDR'] );
-
-    if ( $access->isValid() ) {
-
-        echo '<h1>Access Granted</h1>';
-
-    } else {
-
-        // Throw up OTP form.
-
-        die(file_get_contents(__DIR__ . '/views/loginform.html'));
-
-    }
-
+// If this file is called directly, abort.
+if (!defined('WPINC')) {
+    throw new Exception('You cannot access this file directly');
 }
 
+require __DIR__ . '/StrataAccessPlugin.php';
 
+// Sets up activation hook
+
+register_activation_hook(__FILE__, function () {
+    if (!class_exists('Routes')) {
+        deactivate_plugins(plugin_basename(__FILE__));
+        wp_die(__('Timber "Routes" class not available to Responses plugin. Plugin can not boot. Ensure Timber plugin is installed and activated before proceeding.'),
+            'Plugin dependency check', array('back_link' => true));
+        exit;
+    }
+});
+
+/**
+ * Begins execution of the plugin.
+ *
+ * Since everything within the plugin is registered via hooks,
+ * then kicking off the plugin from this point in the file does
+ * not affect the page life cycle.
+ *
+ * @since    1.0.0
+ */
+
+// Starts plugin
+add_action('init', function() {
+
+    new StrataAccessPlugin();
+
+});
 
 
