@@ -58,6 +58,9 @@ final class OneTimeLoginTest extends TestCase
         $oneTimeDate = $onetime->getUuidDateTime($uuid);
         $this->assertTrue($date > $oneTimeDate);
 
+        $onetime->setSecret('ABC123');
+        $hash = $onetime->getUserHash();
+        $this->assertTrue($onetime->verifyHash($hash, 'test@studio24.net', '192.168.0.1'));
     }
 
 

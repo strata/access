@@ -19,6 +19,9 @@ class OneTimeLogin
     protected $uuid;
 
     /** @var string */
+    protected $secret;
+
+    /** @var string */
     protected $userHash;
 
     /** @var string */
@@ -56,6 +59,50 @@ class OneTimeLogin
     {
         return $uuid->getDateTime();
     }
+
+    /**
+     * Set secret to help create unique hashes
+     *
+     * @param string $secret
+     */
+    public function setSecret(string $secret)
+    {
+        $this->secret = $secret;
+    }
+
+    /**
+     * Return or generate the user hash
+     *
+     * @return string
+     * @throws MissingParamsException
+     */
+    public function getUserHash(): string
+    {
+        if ($this->userHash !== null) {
+            return $this->userHash;
+        }
+
+        if (empty($this->getEmail()) || empty($this->getIp()) || empty($this->secret)) {
+            throw MissingParamsException('You must set email, IP address and secret before generating the user hash');
+        }
+
+        $this->userHash = password_hash($this->getEmail() . $this->getIp() . $this->secret,  PASSWORD_DEFAULT);
+        return $this->userHash;
+    }
+
+    /**
+     * Verify a user hash against a passed email and IP address
+     *
+     * @param string $hash
+     * @param string $email
+     * @param string $ip
+     * @return bool
+     */
+    public function verifyHash(string $hash, string $email, string $ip): bool
+    {
+        return password_verify($email . $ip . $this->secret, $hash);
+    }
+
 
     /**
      * Check database for valid OTP/UUID entry.
