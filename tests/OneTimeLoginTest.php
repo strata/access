@@ -57,6 +57,11 @@ final class OneTimeLoginTest extends TestCase
         $date = new \DateTime();
         $oneTimeDate = $onetime->getUuidDateTime($uuid);
         $this->assertTrue($date > $oneTimeDate);
+        $this->assertTrue($onetime->verifyUuidTime($uuid, 1));
+
+        $timeInFuture = new \DateTime();
+        $timeInFuture->add(new \DateInterval('PT2H'));
+        $this->assertFalse($onetime->verifyUuidTime($uuid, 1, $timeInFuture));
 
         $onetime->setSecret('ABC123');
         $hash = $onetime->getUserHash();

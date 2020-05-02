@@ -53,11 +53,33 @@ class OneTimeLogin
      * Return creation time from a time-based UUID
      *
      * @param Uuid $uuid
-     * @return \DateTimeInterface
+     * @return \DateTimeImmutable
      */
-    public function getUuidDateTime(UuidV1 $uuid): \DateTimeInterface
+    public function getUuidDateTime(UuidV1 $uuid): \DateTimeImmutable
     {
         return $uuid->getDateTime();
+    }
+
+    /**
+     * Is the UUID still valid and not expired?
+     *
+     * @param UuidV1 $uuid UUID
+     * @param int $expiryHours Hours until UUID expires from creation time
+     * @param \DateTime $now Datetime to compare against expiry, defaults to now
+     * @return bool
+     * @throws \Exception
+     */
+    public function verifyUuidTime(UuidV1 $uuid, int $expiryHours, \DateTime $now = null): bool
+    {
+        // Create new date since UUID date is immutable
+        $expiry = new \DateTime($uuid->getDateTime()->format('c'));
+        $expiry->add(new \DateInterval(sprintf('PT%dH', $expiryHours)));
+
+        if ($now === null) {
+            $now = new \DateTime();
+        }
+
+        return ($now < $expiry);
     }
 
     /**
