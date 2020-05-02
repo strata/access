@@ -4,9 +4,12 @@ declare(strict_types=1);
 namespace Strata\Access;
 
 use Ramsey\Uuid\Uuid;
+use Strata\Access\Traits\LoggerTrait;
 
 class OneTimeLogin
 {
+    use LoggerTrait;
+
     /**
      * @var string
      */

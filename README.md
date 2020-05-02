@@ -65,7 +65,7 @@ use Strata\Access\Access;
 $access = new Access();
 $access->setGroup($group);
 
-// Pass logger of type Monolog\Logger
+// Pass logger of type Monolog\LoggerTrait
 $access->setLogger($logger);
 
 // Set user's IP address
@@ -86,7 +86,7 @@ use Strata\Access\OneTimeLogin;
 // Pass notifier of type Symfony\Component\Notifier\NotifierInterface
 $oneTime = new OneTimeLogin($notifier);
 
-// Pass logger of type Monolog\Logger
+// Pass logger of type Monolog\LoggerTrait
 $oneTime->setLogger($logger);
 
 $oneTime->setIp('100.200.300.400');
@@ -245,6 +245,28 @@ Please note if you're using Strata Access to secure an admin sub-folder, it's re
 ```php
 $cookie = new Cookie();
 $cookie->setCookieDomain('/wp-admin/');
+```
+
+## Tests
+
+Run [PHPUnit](https://phpunit.readthedocs.io/en/8.0/) tests via:
+
+```
+vendor/bin/phpunit
+```
+
+## Coding standards
+
+You can test coding standards (PSR2) via:
+
+```
+vendor/bin/phpcs
+```
+
+Where possible you can auto-fix code via:
+
+```
+vendor/bin/phpcbf
 ```
 
 ## Data privacy & cookies

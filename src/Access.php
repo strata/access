@@ -3,20 +3,16 @@ declare(strict_types=1);
 
 namespace Strata\Access;
 
-use Monolog\Logger;
+use Strata\Access\Traits\LoggerTrait;
 
 class Access
 {
+    use LoggerTrait;
 
     /**
      * @var \Strata\Access\AccessGroup
      */
     public $group;
-
-    /**
-     * @var \Strata\Logger\Logger
-     */
-    protected $logger;
 
     /**
      * @var string
@@ -75,11 +71,6 @@ class Access
     public function setAccessGroup(AccessGroup $group) : void
     {
         $this->group = $group;
-    }
-
-    public function setLogger(Logger $logger) : void
-    {
-        $this->logger = $logger;
     }
 
     public function setUserIpAddress(string $ip) : void

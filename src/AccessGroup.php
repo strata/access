@@ -3,7 +3,6 @@ declare(strict_types=1);
 
 namespace Strata\Access;
 
-use Monolog\Logger;
 use Symfony\Component\Yaml\Yaml;
 
 class AccessGroup
@@ -17,11 +16,6 @@ class AccessGroup
      * @var array
      */
     protected $allowed_domains;
-
-    /**
-     * @var \Strata\Logger\Logger
-     */
-    protected $logger;
 
     /**
      * AccessGroup Constructor
@@ -126,14 +120,6 @@ class AccessGroup
             }
 
         }
-    }
-
-    /**
-     * @param \Strata\Logger\Logger
-     */
-    public function setLogger(Logger $logger) : void
-    {
-        $this->logger = $logger;
     }
 
 }
