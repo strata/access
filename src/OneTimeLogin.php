@@ -4,35 +4,58 @@ declare(strict_types=1);
 namespace Strata\Access;
 
 use Ramsey\Uuid\Uuid;
+use Ramsey\Uuid\Rfc4122\UuidV1;
+use Ramsey\Uuid\Provider\Node\RandomNodeProvider;
+use Strata\Access\Exception\InvalidEmailException;
+use Strata\Access\Exception\InvalidIpAddressException;
+use Strata\Access\Exception\MissingParamsException;
 use Strata\Access\Traits\LoggerTrait;
 
 class OneTimeLogin
 {
     use LoggerTrait;
 
-    /**
-     * @var string
-     */
+    /** @var string */
     protected $uuid;
 
-    /**
-     * @var string
-     */
-    protected $user_email;
+    /** @var string */
+    protected $userHash;
 
+    /** @var string */
+    protected $email;
+
+    /** @var string */
+    protected $ip;
 
     /**
-     * OneTimeLogin Constructor
+     * Return or generate the UUID
+     *
+     * Email and IP address must be set before calling this method
+     *
+     * @return string
      */
-    public function __construct(string $user_email,string $uuid = '')
+    public function getUuid (): UuidV1
     {
-        $this->user_email = $user_email;
-
-        if (!empty($uuid)) {
-            $this->uuid = $uuid;
+        if ($this->uuid !== null) {
+            return $this->uuid;
         }
+
+        $nodeProvider = new RandomNodeProvider();
+        $this->uuid = Uuid::uuid1($nodeProvider->getNode());
+
+        return $this->uuid;
     }
 
+    /**
+     * Return creation time from a time-based UUID
+     *
+     * @param Uuid $uuid
+     * @return \DateTimeInterface
+     */
+    public function getUuidDateTime(UuidV1 $uuid): \DateTimeInterface
+    {
+        return $uuid->getDateTime();
+    }
 
     /**
      * Check database for valid OTP/UUID entry.
@@ -43,7 +66,7 @@ class OneTimeLogin
 
         // @TODO Fix and clean up query, use PDO.
 
-        $query = $wpdb->query("SELECT * FROM strata_access WHERE email='".$this->user_email."' AND uuid='".$this->uuid."'");
+        $query = $wpdb->query("SELECT * FROM strata_access WHERE email='".$this->email."' AND uuid='".$this->uuid."'");
 
         return (bool)$query;
 
@@ -66,7 +89,7 @@ class OneTimeLogin
      */
     public function sendOTP() : void
     {
-        if (!$this->user_email) {
+        if (!$this->email) {
             return;
         }
 
@@ -74,10 +97,10 @@ class OneTimeLogin
         <p>Your login for '.wp_title().' is ready.</p>
         <p>Please click the link below to verify and login using your credentials.</p>
         
-        '.get_site_url().'/access/otp?email='.$this->user_email.'&uuid='.$this->uuid.' ';
+        '.get_site_url().'/access/otp?email='.$this->email.'&uuid='.$this->uuid.' ';
 
         // @TODO: Replace with proper notifier dependency and text/HTML email.
-        mail($this->user_email,'One Time Password',$message);
+        mail($this->email,'One Time Password',$message);
 
         $this->storeOTP();
     }
@@ -92,7 +115,7 @@ class OneTimeLogin
         global $wpdb;
 
         $data = [
-            'email' => $this->user_email,
+            'email' => $this->email,
             'uuid' => $this->uuid
         ];
 
@@ -101,11 +124,51 @@ class OneTimeLogin
 
 
     /**
-     * Setters
+     * Set email
+     *
+     * @param string $email
+     * @throws InvalidEmailException
      */
-    public function setUserEmail(string $email) : void
+    public function setEmail(string $email): void
     {
-        $this->user_email = $email;
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            throw new InvalidEmailException(sprintf('Email address "%s" is not valid', $email));
+        }
+        $this->email = $email;
+    }
+
+    /**
+     * Return email
+     *
+     * @return string|null
+     */
+    public function getEmail(): ?string
+    {
+        return $this->email;
+    }
+
+    /**
+     * Set IP address
+     *
+     * @param string $ip
+     * @throws InvalidIpAddressException
+     */
+    public function setIp(string $ip): void
+    {
+        if (!filter_var($ip, FILTER_VALIDATE_IP)) {
+            throw new InvalidIpAddressException(sprintf('IP address "%s" is not valid', $ip));
+        }
+        $this->ip = $ip;
+    }
+
+    /**
+     * Return IP address
+     *
+     * @return string|null
+     */
+    public function getIp(): ?string
+    {
+        return $this->ip;
     }
 
 }
