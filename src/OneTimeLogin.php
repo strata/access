@@ -83,7 +83,7 @@ class OneTimeLogin
         }
 
         if (empty($this->getEmail()) || empty($this->getIp()) || empty($this->secret)) {
-            throw MissingParamsException('You must set email, IP address and secret before generating the user hash');
+            throw new MissingParamsException('You must set email, IP address and secret before generating the user hash');
         }
 
         $this->userHash = password_hash($this->getEmail() . $this->getIp() . $this->secret,  PASSWORD_DEFAULT);

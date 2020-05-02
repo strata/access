@@ -63,5 +63,14 @@ final class OneTimeLoginTest extends TestCase
         $this->assertTrue($onetime->verifyHash($hash, 'test@studio24.net', '192.168.0.1'));
     }
 
+    public function testMissingParams()
+    {
+        $onetime = new OneTimeLogin();
+        $onetime->setEmail('test@studio24.net');
+
+        $this->expectException(MissingParamsException::class);
+        $hash = $onetime->getUserHash();
+    }
+
 
 }
