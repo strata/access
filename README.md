@@ -1,4 +1,4 @@
-# Strata Access
+# Strata Access [in development]
 
 Manage access to a web resource via IP address or one-time login. This is useful where you need to restrict access by IP address, but your users have dynamic IP addresses due to their home internet connection. Access in this instance can be granted by a one-time password sent to an authorised email address.
 
